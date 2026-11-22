@@ -1,5 +1,26 @@
 # ![Awakener's Orb](https://web.poecdn.com/image/Art/2DItems/Currency/TransferOrb.png) Awakened PoE Trade
 
+## Fork status
+
+This is [andrew-enfusion's fork](https://github.com/andrew-enfusion/awakened-poe-trade)
+of [SnosMe/awakened-poe-trade](https://github.com/SnosMe/awakened-poe-trade).
+The first pass documents the existing application before feature development.
+No custom application behaviour or fork installer has been introduced.
+
+- [Architecture and data flow](./ARCHITECTURE.md)
+- [Source review, findings, and validation](./docs/fork-review.md)
+- [Development approach and proposed next steps](./docs/fork-development.md)
+- [Fork changelog](./CHANGELOG.md)
+
+The MIT copyright and license notice remain in [LICENSE](./LICENSE).
+The download links and showcase below refer to the upstream application.
+Packaging and updater settings also still use upstream identity; see the review
+before building an installer intended for use or distribution.
+
+This product isn't affiliated with or endorsed by Grinding Gear Games in any way.
+
+## Upstream project
+
 [![](https://user-images.githubusercontent.com/4292308/153364874-dde23599-278c-4350-8d86-dadbc4b978b3.svg)](https://somsubhra.github.io/github-release-stats/?username=SnosMe&repository=awakened-poe-trade)
 [![](https://user-images.githubusercontent.com/4292308/153364769-e4fe1e82-1bbc-46ac-8a3c-f5a98a5667cc.svg)](https://patreon.com/awakened_poe_trade)
 [![](https://user-images.githubusercontent.com/4292308/153364565-7a545d26-e617-4a33-a919-ff90d8feda3d.svg)](https://github.com/SnosMe/awakened-poe-trade/issues/22)
