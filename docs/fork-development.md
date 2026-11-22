@@ -4,10 +4,10 @@ title: Fork development approach
 
 # Fork development approach
 
-Status: proposal following the 2026-11-22 source review. Only the fork and review
-documentation have been created. This is not authorization to implement the
-stages below. Read [architecture](../ARCHITECTURE.md) and
-[findings](./fork-review.md) first.
+Status: the 2026-11-22 [identity pass](./fork-identity.md) implements the
+installation/settings/update isolation from Stage 2 and adds its regression
+tests. Pricing features and external integration remain proposals. Read
+[architecture](../ARCHITECTURE.md) and [findings](./fork-review.md) first.
 
 ## Preserve the existing stack
 
@@ -50,9 +50,9 @@ installer names, release destination and update policy. Keep these settings
 coherent and separate from the installed upstream app. Validate generated
 update metadata and configuration paths before installing anything.
 
-Review the inherited CI triggers before enabling workflows. The Build workflow
-packages multiple platforms; the Docs workflow deploys GitHub Pages when docs
-change. This review does not enable workflows, create releases or publish a site.
+The Build workflow now runs identity/updater tests and packages with publishing
+disabled. Docs deployment requires manual dispatch. No workflow has been enabled
+through GitHub settings and no release or documentation site has been published.
 
 ### Stage 3: Implement one feature inside the existing renderer
 
@@ -100,8 +100,9 @@ querying, size, concurrent writes or migration requirements justify it.
 
 ## Checks to add when behaviour changes
 
-Select a test runner when the first tested feature is approved; none is selected
-or added by this review. Mirror source structure under each package's `tests`.
+The host now uses Node's built-in test runner with the existing esbuild dependency
+to compile TypeScript tests. Run `npm test` in `main`. Mirror source structure
+under each package's `tests` when extending coverage.
 Useful cases include parser fixtures from supported languages, query construction,
 provider response mapping, stale response/error rejection, shared throttling,
 429/backoff, cache scoping, settings migration and local transport validation.

@@ -39,6 +39,10 @@ export interface ShortcutAction {
 
 export type UpdateInfo =
   {
+    state: 'disabled'
+    reason: 'fork-policy' | 'disabled-by-flag' | 'development'
+  } |
+  {
     state: 'initial' | 'checking-for-update'
   } | {
     state: 'update-available'

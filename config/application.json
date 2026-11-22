@@ -1,0 +1,12 @@
+{
+  "packageName": "awakened-poe-trade-andrew",
+  "productName": "Awakened PoE Trade - Andrew",
+  "appId": "io.github.andrew-enfusion.awakened-poe-trade",
+  "dataDirectory": "awakened-poe-trade-andrew",
+  "repositoryUrl": "https://github.com/andrew-enfusion/awakened-poe-trade",
+  "upstreamRepositoryUrl": "https://github.com/SnosMe/awakened-poe-trade",
+  "updates": {
+    "enabled": false,
+    "checkIntervalMs": 57600000
+  }
+}

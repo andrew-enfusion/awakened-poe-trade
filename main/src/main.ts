@@ -14,6 +14,7 @@ import { AppTray } from './AppTray'
 import { OverlayVisibility } from './windowing/OverlayVisibility'
 import { GameLogWatcher } from './host-files/GameLogWatcher'
 import { HttpProxy } from './proxy'
+import { autoUpdater } from 'electron-updater'
 
 if (!app.requestSingleInstanceLock()) {
   app.exit()
@@ -32,7 +33,12 @@ app.on('ready', async () => {
   const gameLogWatcher = new GameLogWatcher(eventPipe, logger)
   const gameConfig = new GameConfig(eventPipe, logger)
   const poeWindow = new GameWindow()
-  const appUpdater = new AppUpdater(eventPipe)
+  const appUpdater = new AppUpdater(eventPipe, () => autoUpdater, {
+    isPackaged: app.isPackaged,
+    platform: process.platform,
+    portable: Boolean(process.env.PORTABLE_EXECUTABLE_DIR),
+    argv: process.argv
+  })
   const _httpProxy = new HttpProxy(server, logger)
 
   setTimeout(

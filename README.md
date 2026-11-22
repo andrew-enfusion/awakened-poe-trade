@@ -4,18 +4,21 @@
 
 This is [andrew-enfusion's fork](https://github.com/andrew-enfusion/awakened-poe-trade)
 of [SnosMe/awakened-poe-trade](https://github.com/SnosMe/awakened-poe-trade).
-The first pass documents the existing application before feature development.
-No custom application behaviour or fork installer has been introduced.
+The initial review documents the existing application before feature development.
+The first implementation pass isolates the fork's desktop identity, settings,
+browser session and update policy. A custom pricing feature has not been selected.
 
 - [Architecture and data flow](./ARCHITECTURE.md)
 - [Source review, findings, and validation](./docs/fork-review.md)
 - [Development approach and proposed next steps](./docs/fork-development.md)
+- [Fork identity, update policy and validation](./docs/fork-identity.md)
 - [Fork changelog](./CHANGELOG.md)
 
 The MIT copyright and license notice remain in [LICENSE](./LICENSE).
 The download links and showcase below refer to the upstream application.
-Packaging and updater settings also still use upstream identity; see the review
-before building an installer intended for use or distribution.
+Use `npm run package` in `main` to select the fork's packaging configuration.
+Publishing and application updates are disabled by default. See the identity
+document for validation results and the remaining Windows packaging limitation.
 
 This product isn't affiliated with or endorsed by Grinding Gear Games in any way.
 

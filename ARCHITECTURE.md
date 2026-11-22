@@ -3,8 +3,9 @@
 Reviewed on 2026-11-22 against upstream commit
 [`2498730beecc1a46d39214ac437ffbe9f5f542d8`](https://github.com/SnosMe/awakened-poe-trade/commit/2498730beecc1a46d39214ac437ffbe9f5f542d8).
 The application package at this baseline is version `3.30.102`.
-This document describes existing behaviour; proposed changes are in
-[fork development](./docs/fork-development.md).
+This document describes the inherited architecture plus the fork's first identity
+pass. Its implementation and validation are in [fork identity](./docs/fork-identity.md);
+proposed feature work remains in [fork development](./docs/fork-development.md).
 
 ## Application boundaries
 
@@ -14,7 +15,8 @@ and overlay tool. A fork does not add PoE2 support automatically.
 
 | Location | Responsibility | Main entry points |
 | --- | --- | --- |
-| `main/src` | Electron lifecycle, native shortcuts, game-window attachment, clipboard, local files, HTTP proxy, updates | `main.ts`, `server.ts` |
+| `config` | Shared fork identity, repository and update policy | `application.json` |
+| `main/src` | Electron lifecycle, native shortcuts, game-window attachment, clipboard, local files, HTTP proxy, updates | `bootstrap.ts`, `main.ts`, `server.ts` |
 | `renderer/src/parser` | Convert copied item descriptions into a structured item | `Parser.ts`, `ParsedItem.ts` |
 | `renderer/src/assets/data` | Load and index bundled item/stat definitions and translations | `index.ts`, `interfaces.ts` |
 | `renderer/src/web/background` | Browser-side host transport, leagues, poe.ninja prices | `IPC.ts`, `Leagues.ts`, `Prices.ts` |
@@ -30,8 +32,9 @@ separate VitePress project.
 
 ## Startup
 
-1. `main/src/main.ts` obtains the single-instance lock, enables Electron's
-   sandbox, creates host services and prepares shortcuts and the overlay.
+1. `main/src/bootstrap.ts` sets the fork name, application ID, settings directory
+   and browser-session directory before importing host modules. `main.ts` then
+   obtains the single-instance lock, enables Electron's sandbox and creates services.
 2. `main/src/server.ts` starts HTTP and WebSocket services. Production defaults
    to a random port on `127.0.0.1`; development uses port `8584`.
 3. The overlay loads the local application, or the development Vite server at
@@ -133,8 +136,11 @@ the main architectural obstacle to treating the local server as a data API.
 | `GET /uploads/<filename>` | Reads stored assets |
 | Other production paths | Serve packaged renderer files |
 
-Configuration is JSON in `apt-data/config.json` under Electron's `userData`
-directory. Uploaded files use `apt-data/files`; optional OCR files use
+Configuration is JSON in `apt-data/config.json` under the fork's explicit
+Electron `userData` directory. Its directory name comes from
+`config/application.json` under Electron's `appData` path. `sessionData` uses
+the same isolated directory, and upstream settings/cookies are not migrated.
+Uploaded files use `apt-data/files`; optional OCR files use
 `apt-data/cv-ocr`. The renderer upgrades configuration through versioned
 migrations; the reviewed default is version 18. There is no application
 database or durable trade-result history in this baseline.
@@ -152,7 +158,11 @@ runs TypeScript checking and esbuild, keeping native overlay/input modules
 external. Electron Builder packages the two outputs together.
 
 Upstream CI builds Windows, Linux and macOS packages. Its Linux AppImage patch
-has a packaging assertion, but the repository has no general application test
-script. Release identity and automatic updates still point to upstream
-configuration. See [review findings](./docs/fork-review.md) before using a
-packaged fork.
+has a packaging assertion. The fork adds a Node test runner for startup identity,
+updater policy and effective packaging configuration; parser and trade-flow test
+coverage is still needed. `npm run package` selects `electron-builder.fork.cjs`,
+which extends the base platform settings and pins fork identity and repository.
+It defaults to `--publish never`. Runtime updates are disabled by policy, and
+documentation deployment requires manual dispatch. See
+[fork identity](./docs/fork-identity.md) for current validation limits and
+[review findings](./docs/fork-review.md) for remaining issues.

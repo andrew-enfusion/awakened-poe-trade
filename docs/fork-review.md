@@ -8,6 +8,11 @@ Reviewed on 2026-11-22. Baseline:
 [`2498730beecc1a46d39214ac437ffbe9f5f542d8`](https://github.com/SnosMe/awakened-poe-trade/commit/2498730beecc1a46d39214ac437ffbe9f5f542d8),
 application `3.30.102`. The fork preserves upstream application behaviour.
 
+This is the original baseline review. The subsequent
+[identity pass](./fork-identity.md) addresses fork identity and updater isolation
+and adds targeted tests. Other findings remain open; the baseline validation
+results below are historical.
+
 ## Assessment
 
 This is a useful foundation for an expanded PoE1 item-checking tool. Its main
