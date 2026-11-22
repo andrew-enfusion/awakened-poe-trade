@@ -4,10 +4,12 @@ title: Fork development approach
 
 # Fork development approach
 
-Status: the 2026-11-22 [identity pass](./fork-identity.md) implements the
+Status: the 2026-11-22 [identity pass](./identity.md) implements the
 installation/settings/update isolation from Stage 2 and adds its regression
-tests. Pricing features and external integration remain proposals. Read
-[architecture](../ARCHITECTURE.md) and [findings](./fork-review.md) first.
+tests. The subsequent [extension pass](./extensions-and-updates.md) separates
+fork modules and automates reviewed upstream source updates. Pricing features
+and external companion integration remain proposals. Read
+[architecture](../ARCHITECTURE.md) and [findings](./review.md) first.
 
 ## Preserve the existing stack
 
@@ -50,24 +52,25 @@ installer names, release destination and update policy. Keep these settings
 coherent and separate from the installed upstream app. Validate generated
 update metadata and configuration paths before installing anything.
 
-The Build workflow now runs identity/updater tests and packages with publishing
-disabled. Docs deployment requires manual dispatch. No workflow has been enabled
-through GitHub settings and no release or documentation site has been published.
+The fork's checks workflow runs extension, identity, updater and automation tests
+with read-only repository permissions. Inherited build/deployment workflows are
+disabled. The separate upstream workflow prepares draft PRs; no release or
+documentation site is published by that workflow.
 
 ### Stage 3: Implement one feature inside the existing renderer
 
-For a comparison feature, a possible structure is:
+For a comparison feature, the extension layer now supplies this location:
 
 ```text
-renderer/src/web/price-check/
+renderer/src/extensions/
   models/comparison.ts              # required fields, source and timestamps
   services/comparison-service.ts    # feature logic using one existing search path
   components/ComparisonPanel.vue    # presentation
-renderer/tests/web/price-check/
+renderer/tests/extensions/
   services/comparison-service.test.ts
 ```
 
-This structure is illustrative, not a scaffold already created. Use it only if
+The comparison files above are illustrative, not a feature already created. Use them only if
 the selected feature requires those responsibilities. Keep request construction,
 provider fetching, response mapping and presentation separate as they are
 touched. Preserve full required data before mapping it to the existing table.
@@ -102,7 +105,9 @@ querying, size, concurrent writes or migration requirements justify it.
 
 The host now uses Node's built-in test runner with the existing esbuild dependency
 to compile TypeScript tests. Run `npm test` in `main`. Mirror source structure
-under each package's `tests` when extending coverage.
+under each package's `tests` when extending coverage. Renderer extension tests
+use Node 24's native TypeScript support; automation tests use temporary Git
+repositories without calling GitHub.
 Useful cases include parser fixtures from supported languages, query construction,
 provider response mapping, stale response/error rejection, shared throttling,
 429/backoff, cache scoping, settings migration and local transport validation.

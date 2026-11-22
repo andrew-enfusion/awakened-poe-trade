@@ -7,11 +7,15 @@ of [SnosMe/awakened-poe-trade](https://github.com/SnosMe/awakened-poe-trade).
 The initial review documents the existing application before feature development.
 The first implementation pass isolates the fork's desktop identity, settings,
 browser session and update policy. A custom pricing feature has not been selected.
+Fork features now live in dedicated extension folders. A daily upstream workflow
+prepares a protected review branch and draft pull request, with tests dispatched
+before an update is merged. It never replaces `master` automatically.
 
 - [Architecture and data flow](./ARCHITECTURE.md)
-- [Source review, findings, and validation](./docs/fork-review.md)
-- [Development approach and proposed next steps](./docs/fork-development.md)
-- [Fork identity, update policy and validation](./docs/fork-identity.md)
+- [Source review, findings, and validation](./fork-docs/review.md)
+- [Development approach and proposed next steps](./fork-docs/development.md)
+- [Fork identity, update policy and validation](./fork-docs/identity.md)
+- [Extension authoring and upstream updates](./fork-docs/extensions-and-updates.md)
 - [Fork changelog](./CHANGELOG.md)
 
 The MIT copyright and license notice remain in [LICENSE](./LICENSE).

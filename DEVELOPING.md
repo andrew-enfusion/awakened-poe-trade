@@ -6,8 +6,8 @@ There are 2 main parts of the app:
 2. main: includes the main app (written in Electron). Handles keyboard shortcuts, brings up the UI and overlays.
 
 The fork's shared identity and update policy are in `config/application.json`.
-The host entry is `main/src/bootstrap.ts`: it must initialize settings and browser
-paths before importing host services. See [fork identity](./docs/fork-identity.md)
+The host entry is `main/src/extensions/bootstrap.ts`: it must initialize settings and browser
+paths before importing host services. See [fork identity](./fork-docs/identity.md)
 for the first pass and its validation limits.
 
 Note that these 2 both depend on each other, and one cannot run without the other.
@@ -16,7 +16,7 @@ Note that these 2 both depend on each other, and one cannot run without the othe
 
 The most up-to-date instructions can always be derived from CI:
 
-[.github/workflows/main.yml](./.github/workflows/main.yml)
+[.github/workflows/fork-checks.yml](./.github/workflows/fork-checks.yml)
 
 Use Node 24 with npm. The following commands apply to the fork.
 
@@ -36,6 +36,7 @@ npm run dev
 ```shell
 cd renderer
 npm ci
+npm test
 npm run build
 
 cd ../main
@@ -57,3 +58,21 @@ into ignored `main/dist/tests`. They run without starting Electron or the game.
 Application update checks/downloads/installs are disabled by fork policy.
 `--no-updates` also disables checks and installation when updates are otherwise
 enabled. The fork does not migrate upstream settings, cookies or OCR files.
+
+Renderer features belong in `renderer/src/extensions`; desktop additions belong
+in `main/src/extensions`. Add widgets through the fork widget list and subscribe
+to parsed-item snapshots through the typed renderer context. Keep new business
+logic out of upstream files. See [the extension contract](./fork-docs/extensions-and-updates.md).
+
+Run the updater's Git fixture tests from the repository root:
+
+```shell
+node --test tools/upstream/tests/*.test.mjs
+```
+
+The **Upstream update** GitHub workflow runs daily and can be dispatched manually.
+It prepares a draft PR on `automation/upstream-update`; it does not merge or
+publish. For local preparation, use a fresh clean checkout and
+`node tools/upstream/run.mjs`. That command leaves the local review branch ready
+for inspection; only `--publish` pushes it, manages its PR and dispatches checks.
+Do not use force synchronization to update this fork.

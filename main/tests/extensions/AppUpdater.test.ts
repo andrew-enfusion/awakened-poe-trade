@@ -1,10 +1,10 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import application from '../../config/application.json'
-import { AppUpdater } from '../src/AppUpdater'
-import type { UpdateRuntime } from '../src/config/update-policy'
-import { FakeUpdater } from './helpers/fake-updater'
-import { createServer } from './helpers/fake-server'
+import application from '../../../config/application.json'
+import { AppUpdater } from '../../src/extensions/AppUpdater'
+import type { UpdateRuntime } from '../../src/extensions/config/update-policy'
+import { FakeUpdater } from '../helpers/fake-updater'
+import { createServer } from '../helpers/fake-server'
 
 const runtime: UpdateRuntime = {
   isPackaged: true,

@@ -1,4 +1,4 @@
-import type { UpdateInfo } from '../../../ipc/types'
+import type { UpdateInfo } from '../../../../ipc/types'
 
 export interface UpdatePolicy {
   enabled: boolean

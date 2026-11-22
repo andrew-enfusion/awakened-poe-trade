@@ -9,6 +9,10 @@ identity and release policy are established.
 
 ### Added
 
+- Added isolated desktop/renderer extension folders, typed item snapshots, lifecycle cleanup and a fork widget registration point.
+- Added a daily/manual upstream source-update workflow that prepares a draft PR, preserves fork contracts and dispatches read-only checks.
+- Added Git fixture tests for merge conflicts, protected files, repeated updates, version reconciliation and pull-request handling.
+- Reported workflow-file updates for credentialed manual publication instead of attempting unsupported writes with the built-in Actions token.
 - Documented the inherited architecture and item-to-price data flow before feature development.
 - Recorded source-review findings, build validation, dependency advisories and integration limitations.
 - Proposed a staged development approach that preserves upstream structure and limits maintenance risk.
@@ -16,6 +20,8 @@ identity and release policy are established.
 
 ### Changed
 
+- Moved fork documentation outside the upstream documentation site to avoid framework-migration conflicts.
+- Restored upstream workflow files and reference messages; fork-owned workflows and extension translations now carry our changes separately.
 - Identified this repository as a fork and linked its review documentation from the README.
 - Separated the fork's application, executable, installer, settings and browser-session identity from upstream.
 - Disabled application update checks, downloads and installation by default; made `--no-updates` disable all update activity.

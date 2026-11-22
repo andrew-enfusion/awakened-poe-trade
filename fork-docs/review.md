@@ -9,7 +9,7 @@ Reviewed on 2026-11-22. Baseline:
 application `3.30.102`. The fork preserves upstream application behaviour.
 
 This is the original baseline review. The subsequent
-[identity pass](./fork-identity.md) addresses fork identity and updater isolation
+[identity pass](./identity.md) addresses fork identity and updater isolation
 and adds targeted tests. Other findings remain open; the baseline validation
 results below are historical.
 
@@ -85,7 +85,7 @@ Evidence: [package identity](../main/package.json),
 [packaging](../main/electron-builder.yml),
 [updater](../main/src/AppUpdater.ts),
 [storage](../main/src/host-files/ConfigStore.ts#L8),
-[documentation configuration](./.vitepress/config.js).
+[baseline documentation configuration](https://github.com/SnosMe/awakened-poe-trade/blob/2498730beecc1a46d39214ac437ffbe9f5f542d8/docs/.vitepress/config.js).
 
 ### 3. MIT reuse and GGG service authorization are separate
 

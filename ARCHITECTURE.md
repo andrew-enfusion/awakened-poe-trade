@@ -4,8 +4,9 @@ Reviewed on 2026-11-22 against upstream commit
 [`2498730beecc1a46d39214ac437ffbe9f5f542d8`](https://github.com/SnosMe/awakened-poe-trade/commit/2498730beecc1a46d39214ac437ffbe9f5f542d8).
 The application package at this baseline is version `3.30.102`.
 This document describes the inherited architecture plus the fork's first identity
-pass. Its implementation and validation are in [fork identity](./docs/fork-identity.md);
-proposed feature work remains in [fork development](./docs/fork-development.md).
+and extension passes. See [fork identity](./fork-docs/identity.md),
+[extensions and upstream updates](./fork-docs/extensions-and-updates.md), and
+[proposed feature work](./fork-docs/development.md).
 
 ## Application boundaries
 
@@ -16,7 +17,9 @@ and overlay tool. A fork does not add PoE2 support automatically.
 | Location | Responsibility | Main entry points |
 | --- | --- | --- |
 | `config` | Shared fork identity, repository and update policy | `application.json` |
-| `main/src` | Electron lifecycle, native shortcuts, game-window attachment, clipboard, local files, HTTP proxy, updates | `bootstrap.ts`, `main.ts`, `server.ts` |
+| `main/src` | Upstream desktop services and thin fork adapters | `main.ts`, `server.ts`, `AppUpdater.ts` |
+| `main/src/extensions` | Fork bootstrap, identity and updater policy | `bootstrap.ts`, `AppUpdater.ts`, `config/` |
+| `renderer/src/extensions` | Fork feature lifecycle, copied-item observers, widgets and About component | `adapter.ts`, `runtime.ts`, `widgets/`, `components/` |
 | `renderer/src/parser` | Convert copied item descriptions into a structured item | `Parser.ts`, `ParsedItem.ts` |
 | `renderer/src/assets/data` | Load and index bundled item/stat definitions and translations | `index.ts`, `interfaces.ts` |
 | `renderer/src/web/background` | Browser-side host transport, leagues, poe.ninja prices | `IPC.ts`, `Leagues.ts`, `Prices.ts` |
@@ -24,15 +27,19 @@ and overlay tool. A fork does not add PoE2 support automatically.
 | `renderer/src/web/overlay` | Widget registration, visibility, focus and layout | `OverlayWindow.vue`, `widget-registry.ts` |
 | `ipc` | Shared TypeScript event contracts and key mappings | `types.ts`, `KeyToCode.ts` |
 | `renderer/public/data` | Checked-in language-specific item/stat data and reference assets | `items.ndjson`, `stats.ndjson`, `client_strings.js` |
-| `main/build`, `.github/workflows` | Bundling, native packaging patch, CI and documentation deployment | `script.mjs`, `main.yml`, `pages.yml` |
+| `main/build`, `.github/workflows` | Bundling, native packaging patch, fork CI and upstream synchronization | `script.mjs`, `fork-checks.yml`, `upstream-update.yml` |
+| `tools/upstream`, `config/upstream.json` | Git merge preparation, protected contracts, metadata reconciliation and draft PR publication | `run.mjs`, `prepare.mjs` |
+| `fork-docs` | Fork documentation independent of upstream's documentation framework | `extensions-and-updates.md` |
 
 There is no root npm workspace or root package script. `main` and `renderer`
 have separate package manifests, lockfiles and TypeScript versions. `docs` is a
-separate VitePress project.
+separate upstream documentation project (VitePress at the original baseline;
+the pending upstream update migrates it to Astro). Fork documents are outside
+that site so a framework migration does not move or replace our documentation.
 
 ## Startup
 
-1. `main/src/bootstrap.ts` sets the fork name, application ID, settings directory
+1. `main/src/extensions/bootstrap.ts` sets the fork name, application ID, settings directory
    and browser-session directory before importing host modules. `main.ts` then
    obtains the single-instance lock, enables Electron's sandbox and creates services.
 2. `main/src/server.ts` starts HTTP and WebSocket services. Production defaults
@@ -40,9 +47,17 @@ separate VitePress project.
 3. The overlay loads the local application, or the development Vite server at
    `http://localhost:5173`. `--no-overlay` opens the interface in a browser.
 4. `renderer/src/main.ts` loads configuration, translations and bundled game
-   data, opens the WebSocket connection, then mounts Vue.
+   data, opens the WebSocket connection, starts renderer extensions, then mounts Vue.
 5. The overlay loads leagues, manages widgets and sends configured shortcuts
-   and file locations to the host.
+   and file locations to the host. The widget registry appends fork widgets from
+   `renderer/src/extensions/widgets/index.ts` without changing upstream entries.
+
+The renderer adapter starts trusted, compiled-in features once. Price checking
+notifies them after a successful parse or unidentified-item resolution. Each
+observer gets a separate snapshot; exceptions and rejected promises are reported
+without escaping into the price-check flow. Extensions are trusted application
+code, not sandboxed third-party plugins. No new network requests, clipboard reads
+or persistence are added by this layer.
 
 ## Item-to-price flow
 
@@ -162,7 +177,11 @@ has a packaging assertion. The fork adds a Node test runner for startup identity
 updater policy and effective packaging configuration; parser and trade-flow test
 coverage is still needed. `npm run package` selects `electron-builder.fork.cjs`,
 which extends the base platform settings and pins fork identity and repository.
-It defaults to `--publish never`. Runtime updates are disabled by policy, and
-documentation deployment requires manual dispatch. See
-[fork identity](./docs/fork-identity.md) for current validation limits and
-[review findings](./docs/fork-review.md) for remaining issues.
+It defaults to `--publish never`. Runtime binary updates are disabled by policy.
+The fork uses its own read-only checks workflow and a daily upstream-update
+workflow; inherited build/deployment workflows are disabled in GitHub settings.
+Upstream source updates are merged into a review branch, guarded and tested,
+then left in a draft PR for review. Conflicts never trigger a force-push or an
+automatic merge to `master`. See
+[fork identity](./fork-docs/identity.md) for current validation limits and
+[review findings](./fork-docs/review.md) for remaining issues.

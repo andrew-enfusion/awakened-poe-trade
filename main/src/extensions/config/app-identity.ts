@@ -1,7 +1,7 @@
 import { mkdirSync } from 'node:fs'
 import path from 'node:path'
 import type { App } from 'electron'
-import application from '../../../config/application.json'
+import application from '../../../../config/application.json'
 
 type IdentityApp = Pick<App, 'getPath' | 'setPath' | 'setName' | 'setAppUserModelId'>
 

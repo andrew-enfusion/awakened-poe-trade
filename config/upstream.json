@@ -1,0 +1,32 @@
+{
+  "forkRepository": "andrew-enfusion/awakened-poe-trade",
+  "repositoryUrl": "https://github.com/SnosMe/awakened-poe-trade.git",
+  "branch": "master",
+  "baseBranch": "master",
+  "updateBranch": "automation/upstream-update",
+  "checksWorkflow": "fork-checks.yml",
+  "legacyWorkflows": ["main.yml", "pages.yml"],
+  "committer": {
+    "name": "github-actions[bot]",
+    "email": "41898282+github-actions[bot]@users.noreply.github.com"
+  },
+  "protectedPaths": [
+    "config/application.json", "config/upstream.json", "fork-docs",
+    "main/src/extensions", "main/src/AppUpdater.ts", "main/tests/extensions",
+    "main/electron-builder.fork.cjs", "main/build/test.mjs",
+    "renderer/src/extensions", "renderer/tests/extensions", "tools/upstream",
+    ".github/workflows/fork-checks.yml", ".github/workflows/upstream-update.yml"
+  ],
+  "hooks": [
+    { "path": "main/build/script.mjs", "text": "src/extensions/bootstrap.ts" },
+    { "path": "renderer/src/main.ts", "text": "initializeRendererExtensions(messages =>" },
+    { "path": "renderer/src/web/overlay/widget-registry.ts", "text": "registry.widgets.push(...extensionWidgets)" },
+    { "path": "renderer/src/web/price-check/PriceCheckWindow.vue", "text": "extensions.itemParsed(item.value.value, 'copied')" },
+    { "path": "renderer/src/web/price-check/PriceCheckWindow.vue", "text": "extensions.itemParsed(identified, 'identified')" },
+    { "path": "renderer/src/web/settings/about.vue", "text": "@/extensions/components/ForkAbout.vue" }
+  ],
+  "protectedScripts": {
+    "main/package.json": ["test", "package"],
+    "renderer/package.json": ["test"]
+  }
+}

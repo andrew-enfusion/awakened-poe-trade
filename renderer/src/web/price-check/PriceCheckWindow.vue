@@ -86,6 +86,7 @@ import CheckPositionCircle from './CheckPositionCircle.vue'
 import AppTitleBar from '@/web/ui/AppTitlebar.vue'
 import ItemQuickPrice from '@/web/ui/ItemQuickPrice.vue'
 import { PriceCheckWidget, WidgetManager, WidgetSpec } from '../overlay/interfaces'
+import { extensions } from '@/extensions/adapter'
 
 type ParseError = { name: string; message: string; rawText: ParsedItem['rawText'] }
 
@@ -193,12 +194,14 @@ export default defineComponent({
         }))
 
       if (item.value.isOk()) {
+        extensions.itemParsed(item.value.value, 'copied')
         queuePricesFetch()
       }
     })
 
     function handleIdentification (identified: ParsedItem) {
       item.value = ok(identified)
+      extensions.itemParsed(identified, 'identified')
     }
 
     MainProcess.onEvent('MAIN->OVERLAY::hide-exclusive-widget', () => {

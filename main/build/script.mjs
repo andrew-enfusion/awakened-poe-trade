@@ -32,7 +32,7 @@ const visionBuild = await esbuild.build({
 })
 
 const mainContext = await esbuild.context({
-  entryPoints: ['src/bootstrap.ts'],
+  entryPoints: ['src/extensions/bootstrap.ts'],
   bundle: true,
   minify: !isDev,
   platform: 'node',

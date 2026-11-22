@@ -7,13 +7,13 @@ import { createRequire } from 'node:module'
 import { runInNewContext } from 'node:vm'
 import { setImmediate } from 'node:timers/promises'
 import { build } from 'esbuild'
-import application from '../../config/application.json'
+import application from '../../../config/application.json'
 
 test('the actual bundled entry initializes identity before importing host services', async (t) => {
   const appData = mkdtempSync(path.join(tmpdir(), 'poe-bootstrap-'))
   t.after(() => { rmSync(appData, { recursive: true, force: true }) })
   const result = await build({
-    entryPoints: ['src/bootstrap.ts'],
+    entryPoints: ['src/extensions/bootstrap.ts'],
     bundle: true,
     write: false,
     format: 'cjs',
@@ -22,7 +22,7 @@ test('the actual bundled entry initializes identity before importing host servic
       name: 'stub-desktop-boundary',
       setup (builder) {
         builder.onResolve({ filter: /^electron$/ }, () => ({ path: 'electron', namespace: 'stub' }))
-        builder.onResolve({ filter: /^\.\/main\.js$/ }, () => ({ path: 'host-entry', namespace: 'stub' }))
+        builder.onResolve({ filter: /^\.\.\/main\.js$/ }, () => ({ path: 'host-entry', namespace: 'stub' }))
         builder.onLoad({ filter: /.*/, namespace: 'stub' }, ({ path: name }) => ({
           contents: name === 'electron'
             ? `exports.app = {

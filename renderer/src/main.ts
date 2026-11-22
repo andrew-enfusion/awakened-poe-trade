@@ -4,14 +4,14 @@ import * as I18n from './web/i18n'
 import * as Data from './assets/data'
 import { initConfig, AppConfig } from './web/Config'
 import { Host } from './web/background/IPC'
-import application from '../../config/application.json'
+import { initializeRendererExtensions } from './extensions/adapter'
 
 ;(async function () {
-  document.title = application.productName
   await initConfig()
   const i18nPlugin = await I18n.init(AppConfig().language)
   await Data.init(AppConfig().language)
   await Host.init()
+  initializeRendererExtensions(messages => { i18nPlugin.global.mergeLocaleMessage('en', messages) })
 
   watch(() => AppConfig().language, async () => {
     await Data.loadForLang(AppConfig().language)

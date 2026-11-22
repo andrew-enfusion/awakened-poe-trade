@@ -1,0 +1,40 @@
+name: Upstream update
+
+on:
+  schedule:
+    - cron: '17 9 * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: upstream-update
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  prepare:
+    if: github.repository == 'andrew-enfusion/awakened-poe-trade'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      actions: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+      - name: Prepare protected update branch and draft pull request
+        run: node tools/upstream/run.mjs --publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+          UPSTREAM_REPORT: ${{ runner.temp }}/upstream-report.json
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: upstream-report
+          path: ${{ runner.temp }}/upstream-report.json
+          if-no-files-found: warn

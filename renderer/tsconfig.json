@@ -6,6 +6,7 @@
     "jsx": "preserve",
     "moduleResolution": "node",
     "resolveJsonModule": true,
+    "allowImportingTsExtensions": true,
     "skipLibCheck": true,
     "isolatedModules": true,
     "esModuleInterop": true,
@@ -21,6 +22,7 @@
   },
   "include": [
     "src/**/*.ts", "src/**/*.d.ts", "src/**/*.vue",
+    "tests/**/*.ts",
     "public/data/*/client_strings.js"
   ],
   "references": [{ "path": "./tsconfig.node.json" }]

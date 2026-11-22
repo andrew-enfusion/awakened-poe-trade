@@ -4,8 +4,8 @@ import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync
 import { tmpdir } from 'node:os'
 import path from 'node:path'
 import type { App } from 'electron'
-import application from '../../../config/application.json'
-import { initializeAppIdentity } from '../../src/config/app-identity'
+import application from '../../../../config/application.json'
+import { initializeAppIdentity } from '../../../src/extensions/config/app-identity'
 
 for (const platform of ['win32', 'linux', 'darwin'] as const) {
   test(`${platform} separates settings and browser sessions without migrating upstream data`, (t) => {

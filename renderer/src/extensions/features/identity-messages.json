@@ -1,0 +1,13 @@
+{
+  "app": {
+    "fork_attribution": "Based on Awakened PoE Trade by Alexander Drozdov"
+  },
+  "updates": {
+    "disabled": "Updates are disabled",
+    "disabled_reason": {
+      "fork-policy": "Automatic updates are not enabled for this fork.",
+      "disabled-by-flag": "Update checks and installation are disabled by the launch option.",
+      "development": "Update checks are disabled in development builds."
+    }
+  }
+}

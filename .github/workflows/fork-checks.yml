@@ -1,0 +1,84 @@
+name: Fork checks
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  automation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+      - run: node --test tools/upstream/tests/*.test.mjs
+  renderer:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+      - run: npm ci
+        working-directory: renderer
+      - run: npm run lint
+        working-directory: renderer
+      - run: npm test
+        working-directory: renderer
+      - run: npm run build
+        working-directory: renderer
+      - uses: actions/upload-artifact@v7
+        with:
+          name: fork-renderer-dist
+          path: renderer/dist
+          retention-days: 1
+  main:
+    needs: renderer
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+      - uses: actions/download-artifact@v8
+        with:
+          name: fork-renderer-dist
+          path: renderer/dist
+      - run: npm ci
+        working-directory: main
+      - run: npm test
+        working-directory: main
+      - run: npm run build
+        working-directory: main
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+      - run: npm install --no-audit --no-fund
+        working-directory: docs
+      - name: Build the current upstream documentation framework
+        working-directory: docs
+        run: |
+          if node -e "process.exit(require('./package.json').scripts?.build ? 0 : 1)"; then
+            npm run build
+          else
+            npm exec -- vitepress build
+          fi

@@ -4,7 +4,7 @@ title: Fork identity and update isolation
 
 # Fork identity and update isolation
 
-Implemented on 2026-11-22 following the [baseline review](./fork-review.md).
+Implemented on 2026-11-22 following the [baseline review](./review.md).
 This pass establishes an isolated desktop fork before pricing features are added.
 
 ## Configuration and startup
@@ -14,7 +14,7 @@ application ID, data-directory name, repository links and update policy.
 The current identity is `Awakened PoE Trade - Andrew`, with package/executable
 name `awakened-poe-trade-andrew`.
 
-`main/src/bootstrap.ts` initializes that identity before importing `main.ts`.
+`main/src/extensions/bootstrap.ts` initializes that identity before importing `main.ts`.
 This ordering matters: the file-upload module captures its storage directory
 during import. Setting a path only before the ready event would be too late.
 The fork uses its own settings and browser-session directories, and acquires
@@ -66,9 +66,11 @@ names and explicit GitHub repository. Setup and portable executables have
 different artifact names. A regression test loads and validates the effective
 Electron Builder configuration to catch merged inherited publishers.
 
-Publishing defaults to `never`, and CI no longer supplies a publishing token.
-The documentation workflow requires manual dispatch. Neither workflow was
-enabled through repository settings, and no site or release was published.
+Publishing defaults to `never`, and application-build checks do not receive a
+publishing token. The later extension pass restores upstream workflow files and
+disables those inherited workflows in GitHub settings, using separate fork-owned
+checks and source-update workflows instead. No site or application release was
+published. See [the update workflow](./extensions-and-updates.md).
 
 The npm package name and repository fields must match shared configuration.
 Tests enforce that invariant, including lockfile root metadata. Dependency
