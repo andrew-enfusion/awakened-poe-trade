@@ -28,13 +28,14 @@ test('publication disables legacy workflows, uses a normal push, creates a draft
   const bodyFile = path.join(directory, 'body.md')
   const run = (command, args) => {
     calls.push({ command, args })
+    if (args[0] === 'api') return 'active'
     if (args[0] === 'pr' && args[1] === 'list') return '[]'
     if (args[0] === 'pr' && args[1] === 'create') return 'https://github.com/example/fork/pull/1\n'
     return ''
   }
   const url = publishCandidate(directory, report, config, bodyFile, run)
   assert.equal(url, 'https://github.com/example/fork/pull/1')
-  assert.deepEqual(calls[2], { command: 'git', args: ['push', 'origin', 'HEAD:refs/heads/automation/upstream-update'] })
+  assert.deepEqual(calls.find(call => call.command === 'git'), { command: 'git', args: ['push', 'origin', 'HEAD:refs/heads/automation/upstream-update'] })
   assert.ok(calls.some(call => call.args.includes('--draft')))
   assert.deepEqual(calls.at(-1).args, ['workflow', 'run', 'fork-checks.yml', '--ref', config.updateBranch, '--repo', config.forkRepository])
   assert.ok(!calls.some(call => call.args.includes('--force') || call.args.includes('merge') || call.args.includes('review')))
@@ -48,6 +49,7 @@ test('an unchanged review branch reuses its pull request without dispatching dup
   const bodyFile = path.join(directory, 'body.md')
   const run = (command, args) => {
     calls.push({ command, args })
+    if (args[0] === 'api') return 'disabled_manually'
     if (args[0] === 'pr' && args[1] === 'list') {
       return JSON.stringify([{ number: 1, url: 'https://github.com/example/fork/pull/1', body: 'Manual reviewer notes.' }])
     }
@@ -57,6 +59,7 @@ test('an unchanged review branch reuses its pull request without dispatching dup
   assert.ok(calls.some(call => call.args[0] === 'pr' && call.args[1] === 'edit'))
   assert.ok(!calls.some(call => call.args[0] === 'workflow' && call.args[1] === 'run'))
   assert.ok(!calls.some(call => call.args[0] === 'pr' && call.args[1] === 'create'))
+  assert.ok(!calls.some(call => call.args[0] === 'workflow' && call.args[1] === 'disable'))
   assert.ok(readFileSync(bodyFile, 'utf8').startsWith('Manual reviewer notes.'))
 })
 

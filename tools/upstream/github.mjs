@@ -34,7 +34,12 @@ export function publishCandidate (directory, report, config, bodyFile, run = exe
     cwd: directory, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe']
   }).trim()
   for (const workflow of config.legacyWorkflows) {
-    execute('gh', ['workflow', 'disable', workflow, '--repo', config.forkRepository])
+    const state = execute('gh', ['api', `repos/${config.forkRepository}/actions/workflows/${workflow}`, '--jq', '.state'])
+    if (state === 'active') {
+      execute('gh', ['workflow', 'disable', workflow, '--repo', config.forkRepository])
+    } else if (!state.startsWith('disabled')) {
+      throw new Error(`Unexpected inherited workflow state for ${workflow}: ${state}`)
+    }
   }
   // Normal fast-forward push only. A concurrent change rejects this operation instead of being overwritten.
   execute('git', ['push', 'origin', `HEAD:refs/heads/${config.updateBranch}`])

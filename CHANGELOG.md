@@ -30,6 +30,7 @@ identity and release policy are established.
 
 ### Fixed
 
+- Made upstream publication reuse already-disabled inherited workflows without failing on GitHub's non-idempotent disable endpoint.
 - Initialized fork paths before host modules capture file locations, preventing imported assets from using the upstream settings directory.
 - Removed the inherited publisher entry so effective packaging metadata contains only the fork repository.
 - Synchronized the host lockfile's package name and version metadata with its manifest.
