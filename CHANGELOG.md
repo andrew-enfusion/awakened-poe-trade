@@ -20,6 +20,8 @@ identity and release policy are established.
 
 ### Changed
 
+- Integrated upstream source [db3486768c77](https://github.com/SnosMe/awakened-poe-trade/commit/db3486768c770ed1cb3200f8941d112f44a1b536) while retaining fork extensions.
+
 - Moved fork documentation outside the upstream documentation site to avoid framework-migration conflicts.
 - Restored upstream workflow files and reference messages; fork-owned workflows and extension translations now carry our changes separately.
 - Identified this repository as a fork and linked its review documentation from the README.
